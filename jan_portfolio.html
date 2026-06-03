@@ -1,15 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta name="description" content="Jan Elizer I. De Joya — Lead Generation Virtual Assistant. Expert in data mining, prospect research, and organized lead management. Available for remote work."/>
-<meta name="keywords" content="Virtual Assistant, Lead Generation, Data Mining, Data Entry, Philippines VA, Remote Work"/>
-<title>Jan Elizer De Joya | Lead Generation VA</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jan Elizer I. De Joya | Web Developer Philippines</title>
+  <meta name="description" content="Web developer and lead-generation specialist from the Philippines — building websites, QA, and verified lead lists for remote clients." />
+  <meta name="keywords" content="web developer, web developer Philippines, lead generation, virtual assistant, data mining, QA, HTML, CSS, JavaScript, remote work" />
+  <link rel="canonical" href="https://eli-portfolio-isvc.vercel.app/" />
+  <meta name="theme-color" content="#0D1B2A" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://eli-portfolio-isvc.vercel.app/profile.png" />
+  <meta property="og:url" content="https://eli-portfolio-isvc.vercel.app/" />
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Jan Elizer I. De Joya | Web Developer Philippines" />
+  <meta name="twitter:description" content="Web developer and lead-generation specialist from the Philippines — building websites, QA, and verified lead lists for remote clients." />
+  <meta name="twitter:image" content="https://eli-portfolio-isvc.vercel.app/profile.png" />
+  <!-- Preconnect / Preload -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="preload" href="/profile.png" as="image" />
+  <link rel="icon" href="/favicon.ico" />
+  <!-- Structured data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Jan Elizer I. De Joya",
+    "jobTitle": "Web Developer · Lead Generation Specialist",
+    "url": "https://eli-portfolio-isvc.vercel.app/",
+    "sameAs": [
+      "https://linkedin.com/in/janelizerdejoya"
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "url": "https://eli-portfolio-isvc.vercel.app/",
+    "name": "Jan Elizer I. De Joya",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://eli-portfolio-isvc.vercel.app/?s={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+</head>
+<body>
 
 <style>
 /* ── Reset & Variables ──────────────────────────────────────────────────── */
@@ -689,17 +730,6 @@ footer {
   <a href="#contact" class="btn btn-primary" onclick="toggleMenu()">Hire Me</a>
 </div>
 
-<!-- ── Hero ───────────────────────────────────────────────────────────────── -->
-<section id="hero">
-  <div class="hero-inner">
-    <div class="hero-content">
-      <div class="hero-eyebrow">Available for remote work</div>
-      <h1 class="hero-name">Jan Elizer<br/>De Joya</h1>
-      <div class="hero-role">Lead Generation Virtual Assistant</div>
-      <p class="hero-tagline">
-        Detail-driven VA with a <strong>technical IT background</strong> in web development and quality assurance.
-        I bring <strong>research precision</strong>, data accuracy, and organized communication
-        to every lead generation task — remotely, reliably, and on time.
       </p>
       <div class="hero-btns">
         <a href="#contact" class="btn btn-primary">
@@ -1334,9 +1364,11 @@ footer {
 </section>
 
 <!-- ── Footer ─────────────────────────────────────────────────────────────── -->
+  </main>
+
 <footer>
   <div class="footer-inner">
-    <div class="footer-logo">Jan<span>.</span></div>
+    <a href="#hero" class="footer-logo" aria-label="Go to homepage">Jan<span>.</span></a>
     <div class="footer-copy">© 2026 Jan Elizer I. De Joya · Made with <span>♥</span> · Dolores, Quezon, PH</div>
     <div style="font-size:13px; color: var(--text-dim); font-family: var(--font-mono);">
       Lead Gen VA · Open to Work
@@ -1353,7 +1385,11 @@ window.addEventListener('scroll', () => {
 
 // ── Mobile menu ───────────────────────────────────────────────────────────
 function toggleMenu() {
-  document.getElementById('mobileMenu').classList.toggle('open');
+  const menu = document.getElementById('mobileMenu');
+  const btn = document.getElementById('ham');
+  const isOpen = menu.classList.toggle('open');
+  menu.setAttribute('aria-hidden', String(!isOpen));
+  if (btn) btn.setAttribute('aria-expanded', String(isOpen));
 }
 
 // ── Dark mode (light variant) ─────────────────────────────────────────────
