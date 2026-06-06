@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://eli-portfolio-isvc.vercel.app/sitemap.xml
-Host: eli-portfolio-isvc.vercel.app
