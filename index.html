@@ -614,6 +614,18 @@ button{font-family:var(--font-body);cursor:pointer}
 .proj-card.featured .proj-preview{height:200px}
 .proj-card.featured .proj-body{display:block}
 
+/* Responsive: single-column layouts for smaller viewports */
+@media (max-width: 992px) {
+  .proj-grid,
+  .svc-grid {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+    display: grid !important;
+  }
+  .proj-preview { height:180px !important; }
+  .svc-card { padding:20px !important; }
+}
+
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    CERTIFICATIONS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -646,6 +658,15 @@ button{font-family:var(--font-body);cursor:pointer}
   transition:all var(--t) var(--ease);cursor:pointer;
 }
 .cert-btn:hover{background:rgba(59,130,246,0.2);border-color:rgba(59,130,246,0.4)}
+
+/* Certificate PDF viewer modal */
+.cert-modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:10000;padding:24px;background:rgba(0,0,0,0.6)}
+.cert-modal-content{width:100%;max-width:960px;background:var(--bg);border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.6)}
+.cert-modal-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);}
+.cert-modal-title{font-size:16px;color:var(--white);font-weight:700}
+.cert-modal-close{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer}
+.cert-modal-body{height:70vh;background:#111}
+.cert-modal-iframe{width:100%;height:100%;border:0;background:#111}
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    SERVICES
@@ -695,48 +716,104 @@ button{font-family:var(--font-body);cursor:pointer}
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    TESTIMONIALS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#testi{background:var(--bg);position:relative;z-index:1}
-.testi-hd{text-align:center;margin-bottom:64px}
+#testi{background:var(--bg);position:relative;z-index:1;overflow:hidden}
+#testi::before{
+  content:'';position:absolute;inset:0;
+  background:
+    linear-gradient(180deg,rgba(15,23,42,0.55),rgba(3,7,18,0)),
+    radial-gradient(circle at 50% 52%,rgba(34,211,238,0.08),transparent 42%);
+  pointer-events:none;
+}
+.testi-hd{text-align:center;margin-bottom:36px;position:relative;z-index:1}
 .testi-hd .sec-sub{margin:0 auto}
 .testi-track{
-  display:flex;gap:24px;overflow:hidden;position:relative;
+  position:relative;z-index:1;max-width:860px;margin:0 auto;
+  padding:0 66px 54px;
 }
-.testi-slides{display:flex;gap:24px;transition:transform 0.5s var(--ease)}
+.testi-slides{
+  position:relative;min-height:310px;perspective:1200px;
+}
 .testi-card{
-  min-width:380px;
-  background:rgba(255,255,255,0.03);
-  border:1px solid var(--border);
-  border-radius:var(--radius-lg);
-  padding:32px;
-  flex-shrink:0;
+  position:absolute;inset:0;margin:auto;max-width:560px;width:100%;
+  min-height:285px;padding:28px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  background:
+    linear-gradient(145deg,rgba(15,23,42,0.94),rgba(17,24,39,0.76)),
+    radial-gradient(circle at 18% 12%,rgba(34,211,238,0.13),transparent 32%);
+  border:1px solid rgba(148,163,184,0.16);
+  border-radius:20px;overflow:hidden;
+  box-shadow:0 28px 90px rgba(0,0,0,0.34),0 0 0 1px rgba(255,255,255,0.03) inset;
+  opacity:0;pointer-events:none;
+  transform:translateX(0) scale(0.82) rotateY(0deg);
+  transition:transform 0.55s var(--ease),opacity 0.55s var(--ease),filter 0.55s var(--ease),border-color 0.55s var(--ease);
+}
+.testi-card::before{
+  content:'"';position:absolute;right:24px;top:2px;
+  font-family:Georgia,serif;font-size:82px;line-height:1;
+  color:rgba(96,165,250,0.11);pointer-events:none;
+}
+.testi-card.active{
+  opacity:1;pointer-events:auto;z-index:3;
+  transform:translateX(0) scale(1) rotateY(0deg);
+  border-color:rgba(96,165,250,0.32);filter:none;
+}
+.testi-card.prev{
+  opacity:0.56;z-index:2;pointer-events:auto;cursor:pointer;
+  transform:translateX(-195px) scale(0.82) rotateY(18deg);
+  filter:saturate(0.75) brightness(0.75);
+}
+.testi-card.next{
+  opacity:0.56;z-index:2;pointer-events:auto;cursor:pointer;
+  transform:translateX(195px) scale(0.82) rotateY(-18deg);
+  filter:saturate(0.75) brightness(0.75);
+}
+.testi-card.is-hidden{opacity:0;z-index:1;transform:translateY(18px) scale(0.74)}
+.testi-tag{
+  display:inline-flex;align-self:flex-start;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--cyan);background:rgba(34,211,238,0.08);
+  border:1px solid rgba(34,211,238,0.18);
+  border-radius:99px;padding:6px 12px;margin-bottom:20px;
 }
 .testi-quote{
-  font-size:15px;color:var(--muted);line-height:1.8;margin-bottom:24px;
-  position:relative;padding-left:20px;
+  font-family:var(--font-head);
+  font-size:clamp(15px,1.7vw,19px);font-weight:500;
+  color:#D7E0EC;line-height:1.55;letter-spacing:0;
+  /* make the quote take available vertical space and center its text */
+  flex:1;display:flex;align-items:center;justify-content:center;
+  margin:0;position:relative;z-index:1;
 }
-.testi-quote::before{
-  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
-  background:linear-gradient(var(--blue),var(--cyan));border-radius:2px;
-}
-.testi-author{display:flex;align-items:center;gap:14px}
+.testi-author{display:flex;align-items:center;gap:14px;margin-top:auto;position:relative;z-index:1}
 .testi-avatar{
-  width:44px;height:44px;border-radius:50%;
-  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  width:44px;height:44px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(59,130,246,0.95),rgba(34,211,238,0.9));
   display:flex;align-items:center;justify-content:center;
-  font-weight:700;font-size:16px;flex-shrink:0;
+  font-weight:800;font-size:16px;flex-shrink:0;color:#fff;
+  box-shadow:0 12px 28px rgba(34,211,238,0.16);
 }
-.testi-name{font-size:15px;font-weight:700}
-.testi-role{font-size:12px;color:var(--muted)}
-.testi-controls{display:flex;justify-content:center;gap:12px;margin-top:32px}
+.testi-name{font-size:14px;font-weight:800;color:var(--white)}
+.testi-role{font-size:12px;color:var(--muted);line-height:1.45}
+.testi-controls{
+  position:absolute;left:0;right:0;top:124px;
+  display:flex;justify-content:space-between;pointer-events:none;
+}
 .testi-ctrl{
-  width:38px;height:38px;border-radius:50%;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.1);
-  color:var(--muted);font-size:16px;
-  transition:all var(--t) var(--ease);cursor:pointer;
+  width:42px;height:42px;border-radius:50%;
+  border:1px solid rgba(148,163,184,0.16);
+  background:rgba(15,23,42,0.72);color:var(--white);
   display:flex;align-items:center;justify-content:center;
+  font-size:18px;pointer-events:auto;transition:all var(--t) var(--ease);
 }
-.testi-ctrl:hover{border-color:var(--blue2);color:var(--blue2);background:rgba(59,130,246,0.08)}
+.testi-ctrl:hover{border-color:rgba(34,211,238,0.42);color:var(--cyan);transform:translateY(-2px)}
+.testi-dots{
+  position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+  display:flex;align-items:center;gap:9px;
+}
+.testi-dot{
+  width:8px;height:8px;border-radius:99px;border:none;
+  background:rgba(148,163,184,0.32);transition:all var(--t) var(--ease);
+}
+.testi-dot.active{width:28px;background:linear-gradient(90deg,var(--blue),var(--cyan))}
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    CONTACT
@@ -994,6 +1071,9 @@ footer{
   .footer-top{grid-template-columns:1fr 1fr;gap:40px}
   .proj-grid{grid-template-columns:repeat(2,1fr)}
   .proj-card.featured .proj-body{display:block}
+  .testi-track{padding:0 56px 50px}
+  .testi-card.prev{transform:translateX(-145px) scale(0.8) rotateY(16deg)}
+  .testi-card.next{transform:translateX(145px) scale(0.8) rotateY(-16deg)}
 }
 @media(max-width:768px){
   .nav-links,.nav-right{display:none}
@@ -1004,12 +1084,26 @@ footer{
   .hero-stats{gap:28px}
   .footer-top{grid-template-columns:1fr}
   .ai-panel{width:calc(100vw - 48px)}
+  .testi-track{padding:0 0 52px}
+  .testi-slides{min-height:310px}
+  .testi-card{min-height:285px;padding:26px}
+  .testi-card.prev,.testi-card.next{
+    opacity:0;transform:translateX(0) scale(0.9);pointer-events:none;
+  }
+  .testi-controls{position:static;margin-top:18px;justify-content:center;gap:12px}
+  .testi-ctrl{width:40px;height:40px}
 }
 @media(max-width:480px){
   .hero-btns{flex-direction:column}
   .btn-primary,.btn-outline{width:100%;justify-content:center}
   .traits{grid-template-columns:1fr}
   .skills-grid{grid-template-columns:1fr 1fr}
+  .testi-hd{margin-bottom:30px}
+  .testi-slides{min-height:330px}
+  .testi-card{border-radius:16px;padding:22px;min-height:305px}
+  .testi-quote{font-size:15px;line-height:1.55}
+  .testi-author{align-items:flex-start}
+  .testi-avatar{width:40px;height:40px;border-radius:12px}
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1033,11 +1127,10 @@ footer{
 }
 .modal-close{
   position:absolute;top:20px;right:20px;
-  background:rgba(255,255,255,0.1);border:none;
-  width:40px;height:40px;border-radius:8px;
-  cursor:pointer;font-size:24px;color:var(--white);
-  transition:all var(--t) var(--ease);
-  display:flex;align-items:center;justify-content:center;
+  background:#ef4444;border:none;
+  width:44px;height:44px;border-radius:999px;
+  cursor:pointer;font-size:20px;color:#fff;
+  transition:all var(--t) var(--ease);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(239,68,68,0.18);
 }
 .modal-close:hover{background:rgba(255,255,255,0.2);transform:rotate(90deg)}
 .modal-header{margin-bottom:24px}
@@ -1045,12 +1138,23 @@ footer{
 .modal-desc{font-size:15px;color:var(--muted);line-height:1.8;margin-bottom:20px}
 .modal-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
 .modal-images{margin-bottom:24px}
-.modal-img{width:100%;border-radius:12px;margin-bottom:16px;border:1px solid var(--border)}
-.modal-buttons{display:flex;gap:12px}
+.modal-images{position:relative;margin-bottom:24px;height:360px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.modal-img{max-width:100%;max-height:100%;border-radius:12px;border:1px solid var(--border);object-fit:contain}
+.modal-img-btn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:10px;border:none;background:rgba(0,0,0,0.45);color:var(--white);font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.modal-img-prev{left:12px}
+.modal-img-next{right:12px}
+.modal-img-btn:hover{background:rgba(255,255,255,0.06)}
+.modal-image-count{position:absolute;bottom:12px;right:12px;font-size:12px;color:var(--muted);background:rgba(255,255,255,0.02);padding:6px 10px;border-radius:999px}
+.modal-buttons{display:flex;gap:12px;flex-wrap:wrap}
 .modal-btn{
-  flex:1;padding:14px 24px;border-radius:10px;border:none;
+  flex:1;padding:14px 24px;border-radius:10px;border:none;min-width:0;
   font-size:14px;font-weight:600;cursor:pointer;
-  transition:all var(--t) var(--ease);
+  transition:all var(--t) var(--ease);display:inline-flex;align-items:center;justify-content:center;
+}
+
+@media (max-width:520px){
+  .modal-buttons{flex-direction:column}
+  .modal-btn{width:100%;flex:0}
 }
 .modal-btn.primary{
   background:linear-gradient(135deg,var(--blue),#1D4ED8);color:#fff;
@@ -1063,9 +1167,23 @@ footer{
 }
 .modal-btn.secondary:hover{background:rgba(255,255,255,0.15);border-color:var(--blue2)}
 
+.modal-btn.disabled{opacity:0.5;cursor:not-allowed}
+
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 </head>
 <body>
+
+<!-- Lightbox CSS for full-screen image view -->
+<style>
+.lightbox-overlay{display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.92);align-items:center;justify-content:center;padding:20px}
+.lightbox-overlay.open{display:flex}
+.lightbox-img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px}
+.lightbox-close{position:fixed;top:18px;right:18px;background:#ef4444;border:none;color:#fff;width:44px;height:44px;border-radius:999px;cursor:pointer;z-index:2001;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 6px 18px rgba(239,68,68,0.18)}
+.lightbox-nav{position:fixed;left:0;right:0;top:50%;transform:translateY(-50%);display:flex;justify-content:space-between;pointer-events:none;z-index:2001}
+.lightbox-nav button{pointer-events:auto;width:56px;height:56px;border-radius:12px;border:none;background:rgba(255,255,255,0.04);color:#fff;font-size:28px;cursor:pointer}
+.lightbox-caption{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);color:var(--muted);font-size:13px;background:rgba(255,255,255,0.02);padding:8px 12px;border-radius:999px}
+</style>
 
 <!-- Custom cursor removed -->
 
@@ -1192,6 +1310,20 @@ footer{
     </div>
   </div>
 </section>
+
+    <!-- Project modal container -->
+    <div id="projectModal" class="modal-overlay" aria-hidden="true"></div>
+
+    <!-- Image lightbox for full-screen project images -->
+    <div id="imageLightbox" class="lightbox-overlay" aria-hidden="true">
+      <button class="lightbox-close" onclick="closeImageLightbox()" aria-label="Close">×</button>
+      <div class="lightbox-nav">
+        <button onclick="lightboxPrev()" aria-label="Previous">‹</button>
+        <button onclick="lightboxNext()" aria-label="Next">›</button>
+      </div>
+      <img id="lightboxImage" class="lightbox-img" src="" alt="Full image view">
+      <div id="lightboxCaption" class="lightbox-caption"></div>
+    </div>
 
 <!-- ━━━ ABOUT ━━━ -->
 <section id="about" class="section-pad">
@@ -1324,8 +1456,8 @@ footer{
         <div class="skill-pct">Expert</div>
       </div>
       <div class="skill-card reveal delay-4" data-cat="dev">
-        <div class="skill-logo">🔥</div>
-        <div class="skill-name">Firebase & PostgreSQL</div>
+        <div class="skill-logo">🐘</div>
+        <div class="skill-name"> PostgreSQL</div>
         <div class="skill-desc">Real-time databases, auth, and relational data management.</div>
         <div class="skill-bar"><div class="skill-bar-fill" style="width:60%"></div></div>
         <div class="skill-pct">Intermediate</div>
@@ -1345,10 +1477,7 @@ footer{
         <div class="skill-pct">Expert</div>
       </div>
     </div>
-    <div style="margin-top:20px;text-align:center;font-size:12px;font-family:var(--font-mono);color:var(--muted)">
-      <span style="color:var(--cyan)">●</span>&nbsp; Cyan bar = actively learning &nbsp;&nbsp;
-      <span style="color:var(--blue2)">●</span>&nbsp; Blue bar = proficient
-    </div>
+    
   </div>
 </section>
 
@@ -1571,20 +1700,56 @@ footer{
         </div>
       </div> -->
 
-      <!-- CRM Pipeline -->
-      <div class="proj-card reveal delay-2" style="cursor:pointer" onclick="openProjectModal('crmpipeline')">
+      
+
+      <!-- Recall AI -->
+      <div class="proj-card reveal delay-3" style="cursor:pointer" onclick="openProjectModal('recallai')">
         <div class="proj-preview">
           <div class="proj-preview-inner" style="position:relative;">
-            <img src="img/projects/crmpipeline.png" alt="CRM Pipeline preview" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px;z-index:0" />
-            <div style="position:absolute;top:16px;right:16px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);border-radius:8px;padding:8px 14px;font-size:12px;color:var(--blue2);font-family:var(--font-mono);z-index:3">HubSpot · CRM</div>
+            <img src="img/projects/recallai.png" alt="Recall AI preview" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px;z-index:0" />
+            <div style="position:absolute;top:16px;right:16px;background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.18);border-radius:8px;padding:8px 14px;font-size:12px;color:var(--blue2);font-family:var(--font-mono);z-index:3">AI · Personal</div>
           </div>
           <div class="proj-preview-overlay"></div>
         </div>
         <div class="proj-body">
-          <div class="proj-cat">CRM Management</div>
-          <div class="proj-title">HubSpot CRM Pipeline Sample</div>
-          <div class="proj-desc">Kanban-style CRM pipeline demo with stage-based lead flow.</div>
-          <div class="proj-tags"><span class="proj-tag">HubSpot</span><span class="proj-tag">Airtable</span><span class="proj-tag">Data Management</span></div>
+          <div class="proj-cat">AI · Productivity</div>
+          <div class="proj-title">Recall AI — Personal Diary & Reminders</div>
+          <div class="proj-desc">A personal diary and reminder system powered by AI for memory, search, and gentle task reminders.</div>
+          <div class="proj-tags"><span class="proj-tag">React</span><span class="proj-tag">Node.js</span><span class="proj-tag">Notifications</span></div>
+        </div>
+      </div>
+
+      <!-- Capstone Project Ideas -->
+      <div class="proj-card reveal delay-4" style="cursor:pointer" onclick="openProjectModal('capstoneideas')">
+        <div class="proj-preview">
+          <div class="proj-preview-inner" style="position:relative;">
+            <img src="img/projects/gen1.png" alt="Capstone ideas preview" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px;z-index:0" />
+            <div style="position:absolute;top:16px;right:16px;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.18);border-radius:8px;padding:6px 10px;font-size:12px;color:#34D399;font-family:var(--font-mono);z-index:3">AI · Ideas</div>
+          </div>
+          <div class="proj-preview-overlay"></div>
+        </div>
+        <div class="proj-body">
+          <div class="proj-cat">AI · Topic Generator</div>
+          <div class="proj-title">Capstone Project Ideas Generator</div>
+          <div class="proj-desc">AI-powered capstone ideas generator (React, Node.js, Gemini, PostgreSQL).</div>
+          <div class="proj-tags"><span class="proj-tag">AI</span><span class="proj-tag">React</span><span class="proj-tag">Node.js</span><span class="proj-tag">PostgreSQL</span></div>
+        </div>
+      </div>
+
+      <!-- Hand Tracking System -->
+      <div class="proj-card reveal delay-5" style="cursor:pointer" onclick="openProjectModal('handtrack')">
+        <div class="proj-preview">
+          <div class="proj-preview-inner" style="position:relative;">
+            <img src="img/projects/handtracking.png" alt="Hand Tracking preview" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px;z-index:0" />
+            <div style="position:absolute;top:16px;right:16px;background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.18);border-radius:8px;padding:8px 14px;font-size:12px;color:#fb923c;font-family:var(--font-mono);z-index:3">Computer Vision · Fun</div>
+          </div>
+          <div class="proj-preview-overlay"></div>
+        </div>
+        <div class="proj-body">
+          <div class="proj-cat">Computer Vision · Demo</div>
+          <div class="proj-title">Hand Tracking System</div>
+          <div class="proj-desc">Colorful hand-tracking demo that recognizes hand landmarks and visualizes points for an interactive experience.</div>
+          <div class="proj-tags"><span class="proj-tag">MediaPipe</span><span class="proj-tag">TypeScript</span><span class="proj-tag">Visualization</span></div>
         </div>
       </div>
 
@@ -1593,15 +1758,32 @@ footer{
         <div class="proj-preview">
           <div class="proj-preview-inner" style="position:relative;">
             <img src="img/projects/tests.png" alt="QA Testing preview" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px;z-index:0" />
-            <div style="position:absolute;top:16px;right:16px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#fca5a5;font-family:var(--font-mono);z-index:3">QA · Testing</div>
+            <div style="position:absolute;top:16px;right:16px;background:rgba(2, 93, 7, 0.15);border:1px solid rgba(3, 101, 29, 0.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#06e72f;font-family:var(--font-mono);z-index:3">QA · Testing</div>
           </div>
           <div class="proj-preview-overlay"></div>
         </div>
         <div class="proj-body">
-          <div class="proj-cat">Quality Assurance</div>
-          <div class="proj-title">QA Bug Report Documentation</div>
-          <div class="proj-desc">QA report sample with pass/fail status, severity, and clear findings.</div>
-          <div class="proj-tags"><span class="proj-tag">Manual Testing</span><span class="proj-tag">Bug Reports</span><span class="proj-tag">Documentation</span></div>
+          <div class="proj-cat">Testing</div>
+          <div class="proj-title">Test Cases — TMC 2026</div>
+          <div class="proj-desc">Test case templates with acceptance criteria, steps, and execution statuses.</div>
+          <div class="proj-tags"><span class="proj-tag">Test Cases</span><span class="proj-tag">Acceptance Criteria</span><span class="proj-tag">Test Status</span></div>
+        </div>
+      </div>
+
+      <!-- Bug Documentation & Ticketing (replaces Nagcarlan) -->
+      <div class="proj-card reveal delay-2" style="cursor:pointer" onclick="openProjectModal('nagcarlan')">
+        <div class="proj-preview">
+          <div class="proj-preview-inner" style="position:relative;">
+            <img src="img/projects/bugsdocs.png" alt="Bug documentation preview" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px;z-index:0" />
+            <div style="position:absolute;top:16px;right:16px;background:rgba(53, 11, 1, 0.12);border:1px solid rgba(67, 3, 3, 0.18);border-radius:8px;padding:8px 14px;font-size:12px;color:#f50b0b;font-family:var(--font-mono);z-index:3">Bug Tracker · Docs</div>
+          </div>
+          <div class="proj-preview-overlay"></div>
+        </div>
+        <div class="proj-body">
+          <div class="proj-cat">Bug Tracking</div>
+          <div class="proj-title">Bug Documentation & Ticketing</div>
+          <div class="proj-desc">Bug tracker for documenting defects, statuses, and reproduction evidence.</div>
+          <div class="proj-tags"><span class="proj-tag">Bug Tracking</span><span class="proj-tag">Ticketing</span><span class="proj-tag">Documentation</span></div>
         </div>
       </div>
 
@@ -1622,22 +1804,22 @@ footer{
         <div class="cert-icon">🎓</div>
         <div class="cert-org">LSPU – San Pablo</div>
         <div class="cert-name">Bachelor of Science in Information Technology</div>
-        <div class="cert-date">2022 – 2026 (Expected)</div>
-        <button class="cert-btn">View Transcript →</button>
+        <div class="cert-date">2022 – 2026</div>
+        <button class="cert-btn" data-pdf="" >View Transcript →</button>
       </div>
       <div class="cert-card reveal delay-2">
         <div class="cert-icon">🏆</div>
         <div class="cert-org">Internship · QA</div>
         <div class="cert-name">Quality Assurance Certification of Completion</div>
         <div class="cert-date">April 2026</div>
-        <button class="cert-btn">View Certificate →</button>
+        <button class="cert-btn" data-pdf="COC.pdf">View Certificate →</button>
       </div>
       <div class="cert-card reveal delay-3">
-        <div class="cert-icon">⭐</div>
-        <div class="cert-org">Capstone · LSPU</div>
-        <div class="cert-name">CrimeWise — AI Forensic System · Project Lead Award</div>
-        <div class="cert-date">January 2026</div>
-        <button class="cert-btn">View Credential →</button>
+        <div class="cert-icon">🏅</div>
+        <div class="cert-org">NC II · Competency</div>
+        <div class="cert-name">NC II Computer Systems Servicing (CSS)</div>
+        <div class="cert-date">April 2026</div>
+        <button class="cert-btn" data-pdf="NC2.pdf">View Certificate →</button>
       </div>
     </div>
   </div>
@@ -1708,17 +1890,18 @@ footer{
       <h2 class="sec-title">What <span class="gradient-text">Clients Say</span></h2>
       <p class="sec-sub">Feedback from those I've worked with on projects, internships, and freelance engagements.</p>
     </div>
-    <div class="testi-track reveal">
-      <div class="testi-slides" id="testiSlides">
-        <div class="testi-card">
-          <div class="testi-quote">"Jan delivered our website on time with clean, readable code. His attention to detail in testing meant we had zero launch bugs. Would hire again without hesitation."</div>
+    <div class="testi-track reveal" aria-label="Client testimonials carousel">
+      <div class="testi-slides" id="testiSlides" tabindex="0">
+        <div class="testi-card featured active">
+          <div class="testi-tag">Featured feedback</div>
+          <div class="testi-quote">"Eli delivered our website on time with clean, readable code. His attention to detail in testing meant we had zero launch bugs. Would hire again without hesitation."</div>
           <div class="testi-author">
             <div class="testi-avatar">M</div>
             <div><div class="testi-name">Marco Reyes</div><div class="testi-role">Client · E-Commerce Project</div></div>
           </div>
         </div>
         <div class="testi-card">
-          <div class="testi-quote">"Exceptional QA work during his internship. Jan's bug reports were structured, clear, and actionable. He found edge cases our developers missed entirely."</div>
+          <div class="testi-quote">"Exceptional QA work during his internship. Eli's bug reports were structured, clear, and actionable. He found edge cases our developers missed entirely."</div>
           <div class="testi-author">
             <div class="testi-avatar">A</div>
             <div><div class="testi-name">Anna Villanueva</div><div class="testi-role">Supervisor · QA Internship</div></div>
@@ -1732,17 +1915,18 @@ footer{
           </div>
         </div>
         <div class="testi-card">
-          <div class="testi-quote">"Fast turnaround, great communication, and perfectly organized files. Jan handled our data entry project with accuracy I rarely see from remote contractors."</div>
+          <div class="testi-quote">"Fast turnaround, great communication, and perfectly organized files. Eli handled our data entry project with accuracy I rarely see from remote contractors."</div>
           <div class="testi-author">
             <div class="testi-avatar">R</div>
             <div><div class="testi-name">Rodel Cruz</div><div class="testi-role">Client · Data Entry Project</div></div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="testi-controls">
-      <button class="testi-ctrl" id="testiPrev">←</button>
-      <button class="testi-ctrl" id="testiNext">→</button>
+      <div class="testi-controls">
+        <button class="testi-ctrl" id="testiPrev" type="button" aria-label="Previous testimonial">←</button>
+        <button class="testi-ctrl" id="testiNext" type="button" aria-label="Next testimonial">→</button>
+      </div>
+      <div class="testi-dots" id="testiDots" aria-label="Choose testimonial"></div>
     </div>
   </div>
 </section>
@@ -1776,19 +1960,23 @@ footer{
       </div>
       <div class="cform reveal-right">
         <div class="cform-title">Send a Message</div>
+        <form id="contactForm">
+        <!-- Honeypot field to trap bots (hidden from users) -->
+        <input type="text" name="hp" style="display:none!important;position:absolute;left:-9999px;" tabindex="-1" autocomplete="off" />
+        <input type="hidden" name="turnstile_token" />
         <div class="frow">
           <div class="fg">
             <label class="flabel">Your Name</label>
-            <input class="finput" type="text" placeholder="John Smith"/>
+            <input name="name" class="finput" type="text" placeholder="John Smith" required />
           </div>
           <div class="fg">
             <label class="flabel">Email</label>
-            <input class="finput" type="email" placeholder="john@company.com"/>
+            <input name="email" class="finput" type="email" placeholder="john@company.com" required />
           </div>
         </div>
         <div class="fg">
           <label class="flabel">Subject</label>
-          <select class="fselect">
+          <select name="subject" class="fselect">
             <option value="">Select a topic…</option>
             <option>Web Dev / QA Role</option>
             <option>Data Mining Project</option>
@@ -1799,9 +1987,15 @@ footer{
         </div>
         <div class="fg last">
           <label class="flabel">Message</label>
-          <textarea class="ftextarea" placeholder="Tell me about the project or role…"></textarea>
+          <textarea name="message" class="ftextarea" placeholder="Tell me about the project or role…" required></textarea>
         </div>
-        <button class="fsubmit" onclick="handleSubmit(this)">Send Message →</button>
+        <div class="contact-actions" style="padding:18px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:14px;">
+          <div class="captcha-wrap" style="display:flex;align-items:center;justify-content:center;width:100%;">
+            <div id="recaptcha-container" style="width:100%;max-width:360px;"></div>
+          </div>
+          <button class="fsubmit" type="button" onclick="handleSubmit(this)" style="display:block;">Send Message →</button>
+        </div>
+        </form>
       </div>
     </div>
   </div>
@@ -1812,7 +2006,7 @@ footer{
   <div class="footer-in">
     <div class="footer-top">
       <div>
-        <div class="footer-logo">Jan<span style="color:var(--blue)">.</span></div>
+        <div class="footer-logo">Eli<span style="color:var(--blue)">.</span></div>
         <div class="footer-tagline">Web Developer & QA Tester based in the Philippines. Available for remote work worldwide.</div>
         <div class="footer-socials">
           <a href="https://github.com" target="_blank" class="social-link" style="width:36px;height:36px">
@@ -1969,28 +2163,208 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
 });
 
 /* ── Testimonials carousel ── */
+/* ── Contact form ── */
+const testiSlides=document.getElementById('testiSlides');
+const testiCards=[...document.querySelectorAll('.testi-card')];
+const testiDots=document.getElementById('testiDots');
 let testiIdx=0;
-const slides=document.getElementById('testiSlides');
-const testiCards=slides.querySelectorAll('.testi-card');
-function updateTesti(){
-  const cardW=testiCards[0]?.offsetWidth+24||404;
-  slides.style.transform=`translateX(-${testiIdx*cardW}px)`;
+
+if(testiSlides&&testiCards.length&&testiDots){
+  testiCards.forEach((_,i)=>{
+    const dot=document.createElement('button');
+    dot.className='testi-dot';
+    dot.type='button';
+    dot.setAttribute('aria-label',`Show testimonial ${i+1}`);
+    dot.addEventListener('click',()=>setTesti(i));
+    testiDots.appendChild(dot);
+  });
+  testiCards.forEach((card,i)=>card.addEventListener('click',()=>{
+    if(i!==testiIdx)setTesti(i);
+  }));
+
+  function setTesti(nextIdx){
+    testiIdx=(nextIdx+testiCards.length)%testiCards.length;
+    const dots=[...testiDots.querySelectorAll('.testi-dot')];
+    testiCards.forEach((card,i)=>{
+      const prev=(testiIdx-1+testiCards.length)%testiCards.length;
+      const next=(testiIdx+1)%testiCards.length;
+      card.classList.remove('active','prev','next','is-hidden');
+      if(i===testiIdx)card.classList.add('active');
+      else if(i===prev)card.classList.add('prev');
+      else if(i===next)card.classList.add('next');
+      else card.classList.add('is-hidden');
+      card.setAttribute('aria-hidden',i===testiIdx?'false':'true');
+    });
+    dots.forEach((dot,i)=>dot.classList.toggle('active',i===testiIdx));
+  }
+
+  document.getElementById('testiNext')?.addEventListener('click',()=>setTesti(testiIdx+1));
+  document.getElementById('testiPrev')?.addEventListener('click',()=>setTesti(testiIdx-1));
+  testiSlides.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight')setTesti(testiIdx+1);
+    if(e.key==='ArrowLeft')setTesti(testiIdx-1);
+  });
+
+  let touchStart=0;
+  testiSlides.addEventListener('touchstart',e=>{touchStart=e.touches[0].clientX},{passive:true});
+  testiSlides.addEventListener('touchend',e=>{
+    const diff=e.changedTouches[0].clientX-touchStart;
+    if(Math.abs(diff)>45)setTesti(testiIdx+(diff<0?1:-1));
+  },{passive:true});
+
+  setTesti(0);
 }
-document.getElementById('testiNext')?.addEventListener('click',()=>{
-  testiIdx=Math.min(testiIdx+1,testiCards.length-1);updateTesti();
-});
-document.getElementById('testiPrev')?.addEventListener('click',()=>{
-  testiIdx=Math.max(testiIdx-1,0);updateTesti();
+
+// EmailJS integration - configured with your EmailJS IDs
+const EMAILJS_SERVICE_ID = 'service_sr7h6yb';
+const EMAILJS_TEMPLATE_ID = 'template_ijbarhe';
+const EMAILJS_PUBLIC_KEY = '8zt28GUGPlFIAPn9i';
+
+// Rate limiting and captcha configuration
+const RATE_LIMIT_SECONDS = 60; // minimum seconds between sends per browser
+const MAX_PER_DAY = 10; // max sends per day per browser
+const RECAPTCHA_SITE_KEY = ''; // set your reCAPTCHA site key here to enable Google reCAPTCHA
+const TURNSTILE_SITE_KEY = '0x4AAAAAADlRIgXgvD100XfB'; // Cloudflare Turnstile site key (client-side)
+
+function _todayKey(){
+  const d=new Date(); return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+}
+
+function canSubmit(){
+  const now=Date.now();
+  const last = parseInt(localStorage.getItem('contact_last_submit')||'0',10);
+  if(last && now-last < RATE_LIMIT_SECONDS*1000){
+    return {ok:false, reason:'cooldown', retrySeconds: Math.ceil((RATE_LIMIT_SECONDS*1000-(now-last))/1000)};
+  }
+  const dayKey = 'contact_count_'+_todayKey();
+  const count = parseInt(localStorage.getItem(dayKey)||'0',10);
+  if(count>=MAX_PER_DAY) return {ok:false, reason:'daily_limit'};
+  return {ok:true};
+}
+
+function recordSubmit(){
+  const now=Date.now();
+  localStorage.setItem('contact_last_submit',String(now));
+  const dayKey = 'contact_count_'+_todayKey();
+  const count = parseInt(localStorage.getItem(dayKey)||'0',10)+1;
+  localStorage.setItem(dayKey,String(count));
+}
+
+function disableButtonFor(btn,seconds){
+  btn.disabled=true; const orig=btn.innerHTML; btn.innerHTML=`Wait ${seconds}s`;
+  let t=seconds; const iv=setInterval(()=>{t--; if(t<=0){clearInterval(iv); btn.innerHTML=orig; btn.disabled=false;} else btn.innerHTML=`Wait ${t}s`;},1000);
+}
+
+// removed simple math captcha — using Cloudflare Turnstile instead
+
+document.addEventListener('DOMContentLoaded',()=>{
+  if(RECAPTCHA_SITE_KEY){
+    const rc = document.getElementById('recaptcha-container');
+    if(rc){ rc.style.display='block'; /* user must include grecaptcha render code or we can render dynamically */ }
+  }
+  if(TURNSTILE_SITE_KEY){
+    // dynamically load Turnstile script
+    const rc = document.getElementById('recaptcha-container');
+    if(rc){ rc.style.display='block'; }
+    const s = document.createElement('script');
+    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+    s.async = true; s.defer = true;
+    s.onload = ()=>{
+      try{
+        if(window.turnstile && rc){
+          // render Turnstile into the container and set token into hidden input
+          const widgetId = window.turnstile.render(rc, {
+            sitekey: TURNSTILE_SITE_KEY,
+            callback: function(token){
+              const form = document.getElementById('contactForm');
+              if(form) form.querySelector('[name="turnstile_token"]').value = token;
+            }
+          });
+        }
+      }catch(e){console.warn('Turnstile init failed',e)}
+    };
+    document.head.appendChild(s);
+  }
 });
 
-/* ── Contact form ── */
-function handleSubmit(btn){
-  btn.innerHTML='✓ Message Sent!';
-  btn.style.background='linear-gradient(135deg,#059669,#047857)';
-  btn.disabled=true;
-  setTimeout(()=>{
-    btn.innerHTML='Send Message →';btn.style.background='';btn.disabled=false;
-  },3000);
+// Initialize EmailJS SDK (ensure you've added the script in the head)
+if(typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY){
+  try{
+    (function(){
+      emailjs.init(EMAILJS_PUBLIC_KEY);
+    })();
+  }catch(e){console.warn('EmailJS init failed',e)}
+}
+
+async function handleSubmit(btn){
+  const form = document.getElementById('contactForm');
+  if(!form) return;
+  // basic validation
+  if(!form.name.value || !form.email.value || !form.message.value){
+    alert('Please fill in name, email, and message.');
+    return;
+  }
+  // honeypot check
+  if(form.hp && form.hp.value.trim()!==''){
+    console.warn('Honeypot triggered - blocking submit');
+    alert('Failed spam check.');
+    return;
+  }
+  // rate limiting check
+  const allowed = canSubmit();
+  if(!allowed.ok){
+    if(allowed.reason==='cooldown'){
+      alert(`Please wait ${allowed.retrySeconds} seconds before sending another message.`);
+      disableButtonFor(btn, allowed.retrySeconds);
+      return;
+    }
+    if(allowed.reason==='daily_limit'){
+      alert('Daily message limit reached. Please try again tomorrow.');
+      return;
+    }
+  }
+  // simple captcha removed; using Turnstile instead
+  // Cloudflare Turnstile token check (if enabled)
+  if(TURNSTILE_SITE_KEY){
+    const tokenField = form.querySelector('[name="turnstile_token"]');
+    if(!tokenField || !tokenField.value){
+      alert('Please complete the Turnstile challenge to verify you are human.');
+      return;
+    }
+  }
+  if(!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY){
+    alert('Email service not configured. Please set EmailJS IDs in the script.');
+    return;
+  }
+  try{
+    btn.disabled = true;
+    const origText = btn.innerHTML;
+    btn.innerHTML = 'Sending…';
+    // send using EmailJS SDK with template params
+    const templateParams = {
+      name: form.name.value,
+      from_name: form.name.value,
+      time: new Date().toLocaleString(),
+      subject: form.subject ? form.subject.value : '',
+      message: form.message.value,
+      email: form.email.value,
+      reply_to: form.email.value
+    };
+    // include turnstile token if present
+    if(form.turnstile_token && form.turnstile_token.value) templateParams.turnstile_token = form.turnstile_token.value;
+    const resp = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+    // success
+    btn.innerHTML='✓ Message Sent!';
+    btn.style.background='linear-gradient(135deg,#059669,#047857)';
+    form.reset();
+    recordSubmit();
+    setTimeout(()=>{ btn.innerHTML = origText; btn.style.background=''; btn.disabled = false; }, 3000);
+  }catch(err){
+    console.error('EmailJS error',err);
+    alert('Failed to send message. Please try again later or email directly.');
+    btn.disabled = false;
+    btn.innerHTML = 'Send Message →';
+  }
 }
 
 /* ── AI Widget ── */
@@ -2007,13 +2381,13 @@ function toggleAI(){
 }
 
 const aiKnowledge={
-  skills:`Jan's top skills are: Frontend Development (HTML/CSS/JS), QA Testing & Bug Reporting, Data Mining & Web Research, Data Entry & Google Sheets, React/Node.js, PHP/MySQL, Firebase, PostgreSQL, and Website Management.`,
-  crimewise:`CrimeWise is Jan's capstone project — an AI-powered online forensic examination system for handwriting and signature analysis, built for the College of Criminal Justice Education at LSPU-SPCC. It uses React, Node.js, Firebase, and AI/ML for automated grading.`,
-  remote:`Yes! Jan is fully available for remote work worldwide. He's based in Dolores, Quezon, Philippines and is open to both part-time and full-time remote roles.`,
-  contact:`You can reach Jan at: ✉️ janelizerdejoya@gmail.com | 💬 WhatsApp: +63 956 796 6221 | 🔗 LinkedIn: linkedin.com/in/janelizerdejoya`,
-  hire:`To hire Jan, reach out via email at janelizerdejoya@gmail.com or WhatsApp at +63 956 796 6221. He's available for web development, QA testing, and virtual assistance roles.`,
-  experience:`Jan's experience includes: QA Intern (Jan–Apr 2026), Freelance Project Developer (2024–Present), and Capstone Project Lead for CrimeWise (2025–2026). He has 2+ years of IT experience.`,
-  projects:`Jan's key projects include: CrimeWise (AI Forensic Exam System), B2B Lead List Templates, HubSpot CRM Pipelines, and QA Bug Report Documentation.`,
+  skills:`Eli's top skills are: Frontend Development (HTML/CSS/JS), QA Testing & Bug Reporting, Data Mining & Web Research, Data Entry & Google Sheets, React/Node.js, PHP/MySQL, Firebase, PostgreSQL, and Website Management.`,
+  crimewise:`CrimeWise is Eli's capstone project — an AI-powered online forensic examination system for handwriting and signature analysis, built for the College of Criminal Justice Education at LSPU-SPCC. It uses React, Node.js, Firebase, and AI/ML for automated grading.`,
+  remote:`Yes! Eli is fully available for remote work worldwide. He's based in Dolores, Quezon, Philippines and is open to both part-time and full-time remote roles.`,
+  contact:`You can reach Eli at: ✉️ eli@example.com | 💬 WhatsApp: +63 956 796 6221 | 🔗 LinkedIn: linkedin.com/in/eli`,
+  hire:`To hire Eli, reach out via email at eli@example.com or WhatsApp at +63 956 796 6221. He's available for web development, QA testing, and virtual assistance roles.`,
+  experience:`Eli's experience includes: QA Intern (Jan–Apr 2026), Freelance Project Developer (2024–Present), and Capstone Project Lead for CrimeWise (2025–2026). He has 2+ years of IT experience.`,
+  projects:`Eli's key projects include: CrimeWise (AI Forensic Exam System), B2B Lead List Templates, Nagcarlan Resort Booking System, Recall AI (Personal Diary & Reminders), Capstone Project Ideas (Programming), Hand Tracking System, and QA Bug Report Documentation.`,
 };
 
 function getAIResponse(msg){
@@ -2084,43 +2458,71 @@ const projects={
   crimewise:{
     title:'CrimeWise — AI Forensic Exam System',
     description:'Built a full AI-powered online examination system for handwriting and signature analysis used by the College of Criminal Justice Education at LSPU-SPCC. Features include automated grading, signature biometric analysis, and a full student management portal.',
-    images:['img/projects/crimewise.png'],
-    tags:['React','Node.js','Firebase','AI/ML','PHP','PostgreSQL']
+    images:['img/projects/crimewise.png','img/projects/crimewise2.png','img/projects/crimewise3.png','img/projects/crimewise4.png','img/projects/crimewise5.png','img/projects/crimewise6.png','img/projects/crimewise8.png','img/projects/crimewise9.png','img/projects/crimewise10.png','img/projects/crimewise11.png','img/projects/crimewise12.png'],
+    tags:['React','TypeScript','Tailwind CSS','Node.js','Express','AI/ML','PostgreSQL'],
+    demoUrl:'https://youtu.be/usVEjYWh1iA'
   },
-  b2blead:{
-    title:'B2B Lead List Template',
-    description:'A structured 17-column lead list with verified emails, LinkedIn URLs, source tracking, and color-coded status — built for scalable outreach campaigns. Includes integration with Apollo.io and Hunter.io for automated verification.',
-    images:['https://via.placeholder.com/600x400?text=B2B+Lead+List'],
-    tags:['Google Sheets','Apollo.io','Hunter.io','Data Management']
+  
+  recallai:{
+    title:'Recall AI — Personal Diary & Reminders',
+    description:'A personal diary and reminder system powered by AI for memory, search, and gentle task reminders.',
+    images:['img/projects/recallai.png','img/projects/recallai-1.png','img/projects/recallai-2.png','img/projects/recallai-3.png','img/projects/recallai-4.png','img/projects/recallai-5.png','img/projects/recallai-6.png','img/projects/recallai-7.png'],
+    tags:['React','Node.js','PostrgreSQL','AI','Notifications'],
+    demoUrl:'https://youtu.be/U7W3NJEacPg'
   },
-  crmpipeline:{
-    title:'CRM Pipeline Sample',
-    description:'Sample CRM pipeline with Kanban-style lead management: New, Contacted, Responded, and Converted stages with color-coded status indicators. Demonstrates workflow automation and data organization best practices.',
-    images:['https://via.placeholder.com/600x400?text=CRM+Pipeline'],
-    tags:['CRM','Airtable','Data Management','Workflow']
+  capstoneideas:{
+    title:'Capstone Project Ideas Generator',
+    description:'An AI-powered capstone project ideas generator built with a React frontend, Node.js backend, Gemini (or other LLM) integration, and PostgreSQL for storing ideas and user preferences. Produces scoped project proposals, suggested stacks, timelines, and evaluation criteria.',
+    images:['img/projects/gen1.png','img/projects/gen2.png','img/projects/gen3.png'],
+    tags:['AI','React','Node.js','PostgreSQL','Gemini'],
+    demoUrl:'https://youtu.be/U7W3NJEacPg?si=K0Ea9dCjE7GizFL-'
+  },
+  handtrack:{
+    title:'Hand Tracking System',
+    description:'Colorful hand-tracking demo that recognizes hand landmarks and visualizes points for an interactive experience.',
+    images:['img/projects/handtracking.png','img/projects/handtracking1.png','img/projects/handtracking2.png','img/projects/handtracking3.png'],
+    tags:['TypeScript','React','MediaPipe','Vite','Tailwind CSS','Visualization'],
+    projectUrl: 'https://funhandtracker.vercel.app/'
+    
   },
   qabug:{
-    title:'QA Bug Report Documentation',
-    description:'Structured test documentation with pass/fail status, severity levels, and clear descriptions — reflecting real QA internship work and testing methodology. Includes regression testing, functional testing, and comprehensive bug tracking.',
-    images:['https://via.placeholder.com/600x400?text=QA+Bug+Report'],
-    tags:['Manual Testing','Bug Reports','Documentation','QA']
+    title:'Test Cases — TMC 2026',
+    description:'This QA Test Case Management and Execution Sheet manages, executes, and monitors testing for the TMC 2026 application. It includes a test-execution dashboard that automatically calculates overall testing status (passed, failed, blocked, not-started) and percentages using spreadsheet formulas. Test cases are organized by user story and feature with acceptance criteria, test steps, expected results, severity, and execution status. Results are tracked across Web (Chrome, Firefox), Android, and iOS/Safari. The sample validates the Navigation Bar (logo, menu items, dropdowns, light/dark toggle). The sheet streamlines test management, provides real-time testing insights, and helps assess release readiness.',
+    images:['img/projects/tests.png'],
+    tags:['Test Cases','Acceptance Criteria','Test Status','QA'],
+    
+  },
+  nagcarlan:{
+    title:'Bug Documentation & Ticketing',
+    description:'Bug documentation and ticketing used to manage and monitor software defects identified during QA testing. Each bug entry includes a Bug ID, detailed Description, Actual Results, Expected Results, and attached Documentation (screenshots/videos). The tracker records Test Device Used (e.g., Desktop Chrome, iOS) and includes Development Status (Done, In Development, For Retesting, Not Started), Severity, Priority, Assigned Developers and Documenters, and Remarks. The sheet uses Google Sheets features (dropdowns, conditional formatting) to automate status management, visually categorize severity/priority, and provide a clear overview of defect progress across sprints to support efficient defect tracking, retesting, verification, and release readiness.',
+    images:['img/projects/bugsdocs.png'],
+    tags:['Bug Tracking','Ticketing','Documentation','Google Sheets'],
+    
   }
 };
 
 function openProjectModal(projectId){
   const project=projects[projectId];
   if(!project)return;
-  
+
   const modal=document.getElementById('projectModal');
   let content=modal.querySelector('.modal-content');
   if(!content){
     modal.innerHTML='<div class="modal-content"></div>';
     content=modal.querySelector('.modal-content');
   }
-  
-  let tagsHtml=project.tags.map(tag=>`<span class="proj-tag">${tag}</span>`).join('');
-  let imagesHtml=project.images.map(img=>`<img src="${img}" alt="Project preview" class="modal-img">`).join('');
-  
+
+  const tagsHtml=(project.tags||[]).map(tag=>`<span class="proj-tag">${tag}</span>`).join('');
+  const imagesHtml=(project.images||[]).map(img=>`<img src="${img}" alt="Project preview" class="modal-img">`).join('');
+
+  const visitHtml = (project.projectUrl && project.projectUrl.trim())
+    ? `<a class="modal-btn primary" href="${project.projectUrl}" target="_blank" rel="noopener">View Project</a>`
+    : '';
+
+  const watchHtml = (project.demoUrl && project.demoUrl.trim())
+    ? `<a class="modal-btn secondary" href="${project.demoUrl}" target="_blank" rel="noopener">Watch Demo</a>`
+    : '';
+
   content.innerHTML=`
     <button class="modal-close" onclick="closeProjectModal()">×</button>
     <div class="modal-header">
@@ -2128,24 +2530,231 @@ function openProjectModal(projectId){
       <p class="modal-desc">${project.description}</p>
       <div class="modal-tags">${tagsHtml}</div>
     </div>
-    <div class="modal-images">${imagesHtml}</div>
-    <div class="modal-buttons">
-      <button class="modal-btn primary" onclick="alert('View feature coming soon!')">View Project →</button>
-      <button class="modal-btn secondary" onclick="alert('Download feature coming soon!')">Download</button>
+    <div class="modal-images">
+      <button class="modal-img-btn modal-img-prev" onclick="prevImageUnified()" aria-label="Previous image">‹</button>
+      <img id="modalImage" src="${project.images && project.images.length ? project.images[0] : ''}" alt="Project preview" class="modal-img">
+      <button class="modal-img-btn modal-img-next" onclick="nextImageUnified()" aria-label="Next image">›</button>
+      <div class="modal-image-count">${project.images && project.images.length>1 ? `1/${project.images.length}` : ''}</div>
     </div>
+    <div class="modal-buttons">${visitHtml}${watchHtml}</div>
   `;
-  
+
+  // initialize carousel state
+  window.modalImages = project.images || [];
+  window.modalImageIndex = 0;
+
+  if(!window.updateModalImage){
+    window.updateModalImage = function(){
+      const imgEl = document.getElementById('modalImage');
+      if(!imgEl) return;
+      imgEl.src = window.modalImages[window.modalImageIndex] || '';
+      const countEl = document.querySelector('.modal-image-count');
+      if(countEl) countEl.textContent = window.modalImages.length>1 ? `${window.modalImageIndex+1}/${window.modalImages.length}` : '';
+      const prevBtn = document.querySelector('.modal-img-prev');
+      const nextBtn = document.querySelector('.modal-img-next');
+      if(prevBtn) prevBtn.style.display = window.modalImages.length>1 ? 'flex' : 'none';
+      if(nextBtn) nextBtn.style.display = window.modalImages.length>1 ? 'flex' : 'none';
+    };
+
+    window.prevModalImage = function(){
+      if(!window.modalImages || window.modalImages.length<=1) return;
+      window.modalImageIndex = (window.modalImageIndex - 1 + window.modalImages.length) % window.modalImages.length;
+      window.updateModalImage();
+    };
+
+    window.nextModalImage = function(){
+      if(!window.modalImages || window.modalImages.length<=1) return;
+      window.modalImageIndex = (window.modalImageIndex + 1) % window.modalImages.length;
+      window.updateModalImage();
+    };
+
+    // keyboard support while modal open
+    window.addEventListener('keydown', function(e){
+      const modalEl = document.getElementById('projectModal');
+      if(!modalEl || !modalEl.classList.contains('open')) return;
+      if(e.key === 'ArrowLeft') window.prevModalImage();
+      if(e.key === 'ArrowRight') window.nextModalImage();
+    });
+  }
+
+  // ensure UI reflects initial state
+  window.updateModalImage();
+  // attach click-to-open on modal image
+  const _modalImgEl = document.getElementById('modalImage');
+  if(_modalImgEl){ _modalImgEl.style.cursor='zoom-in'; _modalImgEl.onclick = function(){ openImageLightbox(window.modalImageIndex); }; }
+
   modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
 }
 
 function closeProjectModal(){
-  document.getElementById('projectModal').classList.remove('open');
+  const modal=document.getElementById('projectModal');
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden','true');
 }
 
 document.getElementById('projectModal')?.addEventListener('click',function(e){
   if(e.target===this)closeProjectModal();
 });
 
+// Lightbox: open full-screen view of current project images
+function openImageLightbox(index){
+  if(!window.modalImages || !window.modalImages.length) return;
+  window.lightboxImages = window.modalImages.slice();
+  window.lightboxIndex = (typeof index === 'number') ? index : (window.modalImageIndex || 0);
+  const lb = document.getElementById('imageLightbox');
+  const img = document.getElementById('lightboxImage');
+  const cap = document.getElementById('lightboxCaption');
+  if(img) img.src = window.lightboxImages[window.lightboxIndex] || '';
+  if(cap) cap.textContent = window.lightboxImages.length>1 ? `${window.lightboxIndex+1}/${window.lightboxImages.length}` : '';
+  // show/hide lightbox nav when multiple images
+  const nav = document.querySelector('.lightbox-nav');
+  if(nav) nav.style.display = (window.lightboxImages.length>1) ? 'flex' : 'none';
+  lb.classList.add('open'); lb.setAttribute('aria-hidden','false');
+}
+
+function closeImageLightbox(){
+  const lb = document.getElementById('imageLightbox');
+  if(!lb) return; lb.classList.remove('open'); lb.setAttribute('aria-hidden','true');
+}
+
+function lightboxPrev(){ if(!window.lightboxImages || window.lightboxImages.length<=1) return; window.lightboxIndex = (window.lightboxIndex - 1 + window.lightboxImages.length) % window.lightboxImages.length; updateLightbox(); }
+function lightboxNext(){ if(!window.lightboxImages || window.lightboxImages.length<=1) return; window.lightboxIndex = (window.lightboxIndex + 1) % window.lightboxImages.length; updateLightbox(); }
+function updateLightbox(){ const img = document.getElementById('lightboxImage'); const cap = document.getElementById('lightboxCaption'); if(img) img.src = window.lightboxImages[window.lightboxIndex] || ''; if(cap) cap.textContent = window.lightboxImages.length>1 ? `${window.lightboxIndex+1}/${window.lightboxImages.length}` : ''; }
+
+// attach click-to-open on modal image after modal is shown
+const originalUpdateModalImage = window.updateModalImage;
+window.updateModalImage = function(){
+  if(typeof originalUpdateModalImage === 'function') originalUpdateModalImage();
+  // Update modal image and controls (works even when originalUpdateModalImage was not defined)
+  const modalImgEl = document.getElementById('modalImage');
+  if(modalImgEl){
+    modalImgEl.style.cursor = 'zoom-in';
+    modalImgEl.removeEventListener('click', modalImgEl._lbClick);
+    modalImgEl._lbClick = function(){ openImageLightbox(window.modalImageIndex); };
+    modalImgEl.addEventListener('click', modalImgEl._lbClick);
+    modalImgEl.src = (window.modalImages && window.modalImages.length) ? window.modalImages[window.modalImageIndex] : '';
+  }
+  const countEl = document.querySelector('.modal-image-count');
+  if(countEl) countEl.textContent = (window.modalImages && window.modalImages.length>1) ? `${(window.modalImageIndex||0)+1}/${window.modalImages.length}` : '';
+  const prevBtn = document.querySelector('.modal-img-prev');
+  const nextBtn = document.querySelector('.modal-img-next');
+  if(prevBtn) prevBtn.style.display = (window.modalImages && window.modalImages.length>1) ? 'flex' : 'none';
+  if(nextBtn) nextBtn.style.display = (window.modalImages && window.modalImages.length>1) ? 'flex' : 'none';
+  // also ensure lightbox nav hidden when only one image
+  const lightboxNav = document.querySelector('.lightbox-nav');
+  if(lightboxNav) lightboxNav.style.display = (window.modalImages && window.modalImages.length>1) ? 'flex' : 'none';
+};
+
+// Unified handlers so modal prev/next buttons also update lightbox when open
+function prevImageUnified(){
+  if(window.modalImages && window.modalImages.length>1){
+    window.modalImageIndex = (window.modalImageIndex - 1 + window.modalImages.length) % window.modalImages.length;
+    if(typeof window.updateModalImage === 'function') window.updateModalImage();
+  }
+  const lb = document.getElementById('imageLightbox');
+  if(lb && lb.classList.contains('open')){ lightboxPrev(); }
+}
+function nextImageUnified(){
+  if(window.modalImages && window.modalImages.length>1){
+    window.modalImageIndex = (window.modalImageIndex + 1) % window.modalImages.length;
+    if(typeof window.updateModalImage === 'function') window.updateModalImage();
+  }
+  const lb = document.getElementById('imageLightbox');
+  if(lb && lb.classList.contains('open')){ lightboxNext(); }
+}
+
+// keyboard support for lightbox
+window.addEventListener('keydown', function(e){
+  const lb = document.getElementById('imageLightbox');
+  if(!lb || !lb.classList.contains('open')) return;
+  if(e.key === 'Escape') closeImageLightbox();
+  if(e.key === 'ArrowLeft') lightboxPrev();
+  if(e.key === 'ArrowRight') lightboxNext();
+});
+
+// Delegate clicks to ensure modal controls work even if elements are dynamically created
+document.addEventListener('click', function(e){
+  const prevBtn = e.target.closest('.modal-img-prev');
+  const nextBtn = e.target.closest('.modal-img-next');
+  const modalImg = e.target.closest('#modalImage');
+  if(prevBtn) { e.preventDefault(); prevImageUnified(); return; }
+  if(nextBtn) { e.preventDefault(); nextImageUnified(); return; }
+  if(modalImg) { e.preventDefault(); openImageLightbox(window.modalImageIndex || 0); return; }
+});
+
+</script>
+<script>
+// Certification button handler: open PDF in modal (view-only) if data-pdf present, otherwise open link or show notice.
+function showCertNotice(msg){
+  const notice = document.createElement('div');
+  notice.textContent = msg || 'Certificate will be available soon.';
+  Object.assign(notice.style,{position:'fixed',right:'16px',bottom:'24px',background:'rgba(0,0,0,0.8)',color:'#fff',padding:'10px 14px',borderRadius:'8px',zIndex:9999,fontSize:'13px'});
+  document.body.appendChild(notice);
+  setTimeout(()=>{notice.style.transition='opacity 0.25s';notice.style.opacity='0';},2400);
+  setTimeout(()=>notice.remove(),2700);
+}
+
+function openCertModal(pdfUrl, title){
+  if(!pdfUrl) return showCertNotice('Certificate will be provided soon.');
+  // create modal if not exists
+  let modal = document.getElementById('certModal');
+  if(!modal){
+    modal = document.createElement('div');
+    modal.id = 'certModal';
+    modal.className = 'cert-modal';
+    modal.innerHTML = `
+      <div class="cert-modal-content">
+        <div class="cert-modal-header">
+          <div class="cert-modal-title">${title || 'Certificate'}</div>
+          <button class="cert-modal-close" aria-label="Close">×</button>
+        </div>
+        <div class="cert-modal-body"><iframe class="cert-modal-iframe" src="" sandbox="allow-scripts allow-same-origin"></iframe></div>
+      </div>`;
+    document.body.appendChild(modal);
+    // close handlers
+    modal.querySelector('.cert-modal-close').addEventListener('click',closeCertModal);
+    modal.addEventListener('click', function(e){ if(e.target===modal) closeCertModal(); });
+  }
+  const iframe = modal.querySelector('.cert-modal-iframe');
+  // try to hide toolbar where supported
+  const src = pdfUrl + (pdfUrl.includes('#') ? '&' : '#') + 'toolbar=0&navpanes=0';
+  iframe.src = src;
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCertModal(){
+  const modal = document.getElementById('certModal');
+  if(!modal) return;
+  const iframe = modal.querySelector('.cert-modal-iframe');
+  if(iframe) iframe.src = '';
+  modal.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('.cert-btn').forEach(btn=>{
+    btn.addEventListener('click',function(e){
+      const pdf = (btn.getAttribute('data-pdf')||'').trim();
+      if(pdf){
+        e.preventDefault();
+        // Open certificate in a new tab so the browser PDF viewer shows controls
+        // and the file isn't forced to download automatically.
+        window.open(pdf,'_blank','noopener');
+        return;
+      }
+      const url = (btn.getAttribute('data-href')||btn.getAttribute('href')||'').trim();
+      if(url){
+        // open external link in new tab
+        window.open(url,'_blank','noopener');
+        return;
+      }
+      e.preventDefault();
+      showCertNotice('Certificate will be provided soon.');
+    });
+  });
+});
 </script>
 </body>
 </html>
