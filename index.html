@@ -1106,6 +1106,23 @@ footer{
   .testi-avatar{width:40px;height:40px;border-radius:12px}
 }
 
+/* Extra small screens — prevent horizontal overflow and keep fixed widgets inside viewport */
+@media (max-width:520px) {
+  html,body{max-width:100%;overflow-x:hidden}
+  .wrap{padding:0 16px}
+  /* hide large decorative orbs and floating pills that can create overflow */
+  .orb, .orb-1, .orb-2, .orb-3, #mouse-glow, .fp1, .fp2, .fp3 {display:none!important}
+  /* ensure navbar content stays within the wrap */
+  #navbar{left:0;right:0}
+  .nav-in{padding:0}
+  /* pin AI widget to be visible without zooming */
+  #ai-widget{right:12px;left:auto;bottom:12px}
+  .ai-panel{right:12px;left:auto;width:calc(100vw - 24px)}
+  /* ensure any fixed-width columns collapse to single column */
+  .hero-in{grid-template-columns:1fr!important}
+  .about-in,.exp-in,.contact-in{grid-template-columns:1fr!important}
+}
+
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    PROJECT MODAL
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
