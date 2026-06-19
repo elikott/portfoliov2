@@ -1982,7 +1982,6 @@ footer{
         <form id="contactForm">
         <!-- Honeypot field to trap bots (hidden from users) -->
         <input type="text" name="hp" style="display:none!important;position:absolute;left:-9999px;" tabindex="-1" autocomplete="off" />
-        <input type="hidden" name="turnstile_token" />
         <div class="frow">
           <div class="fg">
             <label class="flabel">Your Name</label>
@@ -2243,7 +2242,6 @@ const EMAILJS_PUBLIC_KEY = '8zt28GUGPlFIAPn9i';
 const RATE_LIMIT_SECONDS = 60; // minimum seconds between sends per browser
 const MAX_PER_DAY = 10; // max sends per day per browser
 const RECAPTCHA_SITE_KEY = ''; // set your reCAPTCHA site key here to enable Google reCAPTCHA
-const TURNSTILE_SITE_KEY = '0x4AAAAAADlRIgXgvD100XfB'; // Cloudflare Turnstile site key (client-side)
 
 function _todayKey(){
   const d=new Date(); return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
@@ -2274,36 +2272,14 @@ function disableButtonFor(btn,seconds){
   let t=seconds; const iv=setInterval(()=>{t--; if(t<=0){clearInterval(iv); btn.innerHTML=orig; btn.disabled=false;} else btn.innerHTML=`Wait ${t}s`;},1000);
 }
 
-// removed simple math captcha — using Cloudflare Turnstile instead
+// removed simple math captcha
 
 document.addEventListener('DOMContentLoaded',()=>{
   if(RECAPTCHA_SITE_KEY){
     const rc = document.getElementById('recaptcha-container');
     if(rc){ rc.style.display='block'; /* user must include grecaptcha render code or we can render dynamically */ }
   }
-  if(TURNSTILE_SITE_KEY){
-    // dynamically load Turnstile script
-    const rc = document.getElementById('recaptcha-container');
-    if(rc){ rc.style.display='block'; }
-    const s = document.createElement('script');
-    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
-    s.async = true; s.defer = true;
-    s.onload = ()=>{
-      try{
-        if(window.turnstile && rc){
-          // render Turnstile into the container and set token into hidden input
-          const widgetId = window.turnstile.render(rc, {
-            sitekey: TURNSTILE_SITE_KEY,
-            callback: function(token){
-              const form = document.getElementById('contactForm');
-              if(form) form.querySelector('[name="turnstile_token"]').value = token;
-            }
-          });
-        }
-      }catch(e){console.warn('Turnstile init failed',e)}
-    };
-    document.head.appendChild(s);
-  }
+  // Turnstile (Cloudflare) removed — keep `recaptcha-container` visible when reCAPTCHA is configured
 });
 
 // Initialize EmailJS SDK (ensure you've added the script in the head)
@@ -2342,15 +2318,7 @@ async function handleSubmit(btn){
       return;
     }
   }
-  // simple captcha removed; using Turnstile instead
-  // Cloudflare Turnstile token check (if enabled)
-  if(TURNSTILE_SITE_KEY){
-    const tokenField = form.querySelector('[name="turnstile_token"]');
-    if(!tokenField || !tokenField.value){
-      alert('Please complete the Turnstile challenge to verify you are human.');
-      return;
-    }
-  }
+  // simple captcha removed
   if(!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY){
     alert('Email service not configured. Please set EmailJS IDs in the script.');
     return;
@@ -2369,8 +2337,7 @@ async function handleSubmit(btn){
       email: form.email.value,
       reply_to: form.email.value
     };
-    // include turnstile token if present
-    if(form.turnstile_token && form.turnstile_token.value) templateParams.turnstile_token = form.turnstile_token.value;
+    // No Turnstile token inclusion (Cloudflare removed)
     const resp = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
     // success
     btn.innerHTML='✓ Message Sent!';
